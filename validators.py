@@ -17,3 +17,13 @@ def validate_customer_id(customer_id: str, existing_ids: list) -> bool:
 def validate_not_empty(value: str) -> bool:
     """빈 문자열 또는 공백만 있는지 검증"""
     return bool(value.strip())
+
+
+def validate_date(date_str: str) -> bool:
+    """YYYY-MM-DD 형식 및 실제 존재하는 날짜인지 검증"""
+    from datetime import datetime
+    try:
+        datetime.strptime(date_str.strip(), "%Y-%m-%d")
+        return True
+    except ValueError:
+        return False

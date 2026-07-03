@@ -35,6 +35,21 @@ class TestSalesReportService(unittest.TestCase):
         result = register_report("C001", "", "내용")
         self.assertFalse(result["success"])
 
+    def test_register_report_invalid_date_format(self):
+        """잘못된 날짜 형식 실패"""
+        result = register_report("C001", "2026/06/09", "내용")
+        self.assertFalse(result["success"])
+
+    def test_register_report_nonexistent_date(self):
+        """존재하지 않는 날짜 실패 (2026-02-30)"""
+        result = register_report("C001", "2026-02-30", "내용")
+        self.assertFalse(result["success"])
+
+    def test_register_report_valid_date(self):
+        """올바른 날짜 허용"""
+        result = register_report("C001", "2026-06-09", "내용")
+        self.assertTrue(result["success"])
+
     def test_register_report_empty_content(self):
         """내용 빈 값 실패"""
         result = register_report("C001", "2026-06-09", "")
