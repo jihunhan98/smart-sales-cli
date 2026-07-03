@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from storage import DATA_DIR
-from sales_report_service import register_report, list_reports, get_report, update_report
+from sales_report_service import register_report, list_reports, get_report, update_report, get_recent_reports
 
 
 class TestSalesReportService(unittest.TestCase):
@@ -76,6 +76,27 @@ class TestSalesReportService(unittest.TestCase):
         """존재하지 않는 영업일지 수정 실패"""
         result = update_report("R999", "C001", "2026-06-09", "내용")
         self.assertFalse(result["success"])
+
+    def test_get_recent_reports(self):
+        """최근 영업일지 5건 조회"""
+        register_report("C001", "2026-06-01", "첫 번째 보고서")
+        register_report("C001", "2026-06-02", "두 번째 보고서")
+        register_report("C001", "2026-06-03", "세 번째 보고서")
+        register_report("C001", "2026-06-04", "네 번째 보고서")
+        register_report("C001", "2026-06-05", "다섯 번째 보고서")
+        register_report("C001", "2026-06-06", "여섯 번째 보고서")
+        recent = get_recent_reports(5)
+        self.assertEqual(len(recent), 5)
+        # activity_date 내림차순 확인
+        self.assertEqual(recent[0]["activity_date"], "2026-06-06")
+        self.assertEqual(recent[4]["activity_date"], "2026-06-02")
+
+    def test_get_recent_reports_less_than_limit(self):
+        """영업일지가 5건 미만일 때 전체 반환"""
+        register_report("C001", "2026-06-01", "첫 번째 보고서")
+        register_report("C001", "2026-06-02", "두 번째 보고서")
+        recent = get_recent_reports(5)
+        self.assertEqual(len(recent), 2)
 
 
 if __name__ == "__main__":

@@ -49,6 +49,15 @@ def list_reports() -> list:
     return _get_all_reports()
 
 
+def list_reports_by_status(status: str) -> list:
+    """특정 상태의 영업일지 목록 조회"""
+    reports = _get_all_reports()
+    status = status.strip().upper()
+    if status not in VALID_STATUSES:
+        return []
+    return [r for r in reports if r["status"] == status]
+
+
 def get_report(report_id: str) -> dict:
     """영업일지 상세 조회"""
     reports = _get_all_reports()
@@ -75,3 +84,10 @@ def update_report(report_id: str, customer_id: str, activity_date: str, content:
             _save_all_reports(reports)
             return {"success": True, "message": "영업일지 수정 완료", "report": r}
     return {"success": False, "message": "존재하지 않는 영업일지입니다."}
+
+
+def get_recent_reports(limit: int = 5) -> list:
+    """최근 영업일지 조회 (activity_date 기준 내림차순, report_id 기준 안정 정렬)"""
+    reports = _get_all_reports()
+    sorted_reports = sorted(reports, key=lambda r: (r["activity_date"], r["report_id"]), reverse=True)
+    return sorted_reports[:limit]
