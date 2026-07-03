@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from storage import DATA_DIR
-from sales_report_service import register_report, list_reports, get_report, update_report
+from sales_report_service import register_report, list_reports, list_reports_by_status, get_report, update_report
 
 
 class TestSalesReportService(unittest.TestCase):
@@ -76,6 +76,19 @@ class TestSalesReportService(unittest.TestCase):
         """존재하지 않는 영업일지 수정 실패"""
         result = update_report("R999", "C001", "2026-06-09", "내용")
         self.assertFalse(result["success"])
+
+    def test_list_reports_by_status(self):
+        """상태별 영업일지 목록 조회"""
+        register_report("C001", "2026-06-09", "첫 번째 보고서")
+        register_report("C002", "2026-06-10", "두 번째 보고서")
+        reports = list_reports_by_status("DRAFT")
+        self.assertEqual(len(reports), 2)
+
+    def test_list_reports_by_status_invalid(self):
+        """잘못된 상태 입력"""
+        register_report("C001", "2026-06-09", "보고서")
+        reports = list_reports_by_status("INVALID")
+        self.assertEqual(reports, [])
 
 
 if __name__ == "__main__":

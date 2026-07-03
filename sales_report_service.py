@@ -49,6 +49,22 @@ def list_reports() -> list:
     return _get_all_reports()
 
 
+def list_reports_by_customer(customer_id: str) -> list:
+    """특정 고객사의 영업일지 목록 조회"""
+    reports = _get_all_reports()
+    customer_id = customer_id.strip()
+    return [r for r in reports if r["customer_id"] == customer_id]
+
+
+def list_reports_by_status(status: str) -> list:
+    """특정 상태의 영업일지 목록 조회"""
+    reports = _get_all_reports()
+    status = status.strip().upper()
+    if status not in VALID_STATUSES:
+        return []
+    return [r for r in reports if r["status"] == status]
+
+
 def get_report(report_id: str) -> dict:
     """영업일지 상세 조회"""
     reports = _get_all_reports()
