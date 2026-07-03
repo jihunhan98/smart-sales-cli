@@ -19,8 +19,8 @@ class TestApprovalService(unittest.TestCase):
             os.remove(self.reports_file)
         with open(self.reports_file, "w", encoding="utf-8") as f:
             json.dump([], f)
-        # 등록 및 상신
-        register_report("C001", "2026-06-09", "내용")
+        # 등록 및 상신 (5자 이상)
+        register_report("C001", "2026-06-09", "테스트 보고서")
         submit_report("R001")
 
     def tearDown(self):
@@ -29,7 +29,7 @@ class TestApprovalService(unittest.TestCase):
 
     def test_submit_report_success(self):
         """상신 성공 (DRAFT -> SUBMITTED)"""
-        register_report("C002", "2026-06-10", "내용2")
+        register_report("C002", "2026-06-10", "두 번째 보고서")
         result = submit_report("R002")
         self.assertTrue(result["success"])
         self.assertEqual(result["report"]["status"], "SUBMITTED")
@@ -47,7 +47,7 @@ class TestApprovalService(unittest.TestCase):
 
     def test_approve_report_draft(self):
         """DRAFT 상태 승인 실패"""
-        register_report("C002", "2026-06-10", "내용2")
+        register_report("C002", "2026-06-10", "두 번째 보고서")
         result = approve_report("R002")
         self.assertFalse(result["success"])
 
@@ -59,7 +59,7 @@ class TestApprovalService(unittest.TestCase):
 
     def test_reject_report_draft(self):
         """DRAFT 상태 반려 실패"""
-        register_report("C002", "2026-06-10", "내용2")
+        register_report("C002", "2026-06-10", "두 번째 보고서")
         result = reject_report("R002")
         self.assertFalse(result["success"])
 

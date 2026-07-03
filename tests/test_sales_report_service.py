@@ -32,12 +32,17 @@ class TestSalesReportService(unittest.TestCase):
 
     def test_register_report_empty_date(self):
         """날짜 빈 값 실패"""
-        result = register_report("C001", "", "내용")
+        result = register_report("C001", "", "고객 미팅 진행")
         self.assertFalse(result["success"])
 
     def test_register_report_empty_content(self):
         """내용 빈 값 실패"""
         result = register_report("C001", "2026-06-09", "")
+        self.assertFalse(result["success"])
+
+    def test_register_report_short_content(self):
+        """내용 5자 미만 실패"""
+        result = register_report("C001", "2026-06-09", "내용")
         self.assertFalse(result["success"])
 
     def test_list_reports_empty(self):
@@ -47,17 +52,17 @@ class TestSalesReportService(unittest.TestCase):
 
     def test_list_reports_with_data(self):
         """데이터 있는 목록 조회"""
-        register_report("C001", "2026-06-09", "내용1")
-        register_report("C002", "2026-06-10", "내용2")
+        register_report("C001", "2026-06-09", "첫 번째 미팅 내용")
+        register_report("C002", "2026-06-10", "두 번째 미팅 내용")
         reports = list_reports()
         self.assertEqual(len(reports), 2)
 
     def test_get_report_found(self):
         """영업일지 상세 조회 성공"""
-        register_report("C001", "2026-06-09", "내용")
+        register_report("C001", "2026-06-09", "고객 미팅 상세")
         r = get_report("R001")
         self.assertIsNotNone(r)
-        self.assertEqual(r["content"], "내용")
+        self.assertEqual(r["content"], "고객 미팅 상세")
 
     def test_get_report_not_found(self):
         """존재하지 않는 영업일지 조회"""
@@ -66,15 +71,15 @@ class TestSalesReportService(unittest.TestCase):
 
     def test_update_report_success(self):
         """영업일지 수정 성공"""
-        register_report("C001", "2026-06-09", "내용")
-        result = update_report("R001", "C002", "2026-06-10", "수정된 내용")
+        register_report("C001", "2026-06-09", "초기 미팅 내용")
+        result = update_report("R001", "C002", "2026-06-10", "수정된 미팅 내용")
         self.assertTrue(result["success"])
         r = get_report("R001")
-        self.assertEqual(r["content"], "수정된 내용")
+        self.assertEqual(r["content"], "수정된 미팅 내용")
 
     def test_update_report_not_found(self):
         """존재하지 않는 영업일지 수정 실패"""
-        result = update_report("R999", "C001", "2026-06-09", "내용")
+        result = update_report("R999", "C001", "2026-06-09", "수정할 내용")
         self.assertFalse(result["success"])
 
 

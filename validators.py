@@ -17,3 +17,8 @@ def validate_customer_id(customer_id: str, existing_ids: list) -> bool:
 def validate_not_empty(value: str) -> bool:
     """빈 문자열 또는 공백만 있는지 검증"""
     return bool(value.strip())
+
+
+def validate_min_length(value: str, min_len: int) -> bool:
+    """문자열 최소 길이 검증 (공백 제거 후)"""
+    return len(value.strip()) >= min_len
