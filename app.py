@@ -108,8 +108,12 @@ def run():
         elif choice == 6:
             print("\n[고객사 삭제]")
             cid = input("고객사 ID: ").strip()
-            result = delete_customer(cid)
-            print(result["message"])
+            confirm = input("정말 삭제하시겠습니까? (y/n): ").strip()
+            if confirm == "y" or confirm == "Y":
+                result = delete_customer(cid)
+                print(result["message"])
+            else:
+                print("삭제가 취소되었습니다.")
 
         elif choice == 7:
             print("\n[영업일지 등록]")
