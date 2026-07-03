@@ -47,8 +47,12 @@ def input_int(prompt: str) -> int:
 def run():
     while True:
         print_menu()
+        raw = input("메뉴를 선택하세요: ").strip()
+        if not raw:
+            print("존재하지 않는 메뉴입니다. 다시 선택해 주세요.")
+            continue
         try:
-            choice = int(input("메뉴를 선택하세요: ").strip())
+            choice = int(raw)
         except ValueError:
             print("숫자를 입력해 주세요.")
             continue
