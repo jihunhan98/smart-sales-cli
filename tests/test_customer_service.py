@@ -89,6 +89,17 @@ class TestCustomerService(unittest.TestCase):
         results = search_customers("")
         self.assertEqual(results, [])
 
+    def test_search_customers_sorted(self):
+        """검색 결과 customer_name 오름차순 정렬 확인"""
+        register_customer("b고객사", "김철수", "b@example.com")
+        register_customer("a고객사", "이영희", "a@example.com")
+        register_customer("c고객사", "박영수", "c@example.com")
+        results = search_customers("고객사")
+        self.assertEqual(len(results), 3)
+        self.assertEqual(results[0]["customer_name"], "a고객사")
+        self.assertEqual(results[1]["customer_name"], "b고객사")
+        self.assertEqual(results[2]["customer_name"], "c고객사")
+
     def test_update_customer_success(self):
         """고객사 수정 성공"""
         register_customer("고객사A", "김철수", "a@example.com")

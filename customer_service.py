@@ -60,7 +60,7 @@ def get_customer(customer_id: str) -> dict:
 
 
 def search_customers(keyword: str) -> list:
-    """고객사 검색 (고객사명, 담당자명, 이메일)"""
+    """고객사 검색 (고객사명, 담당자명, 이메일) - customer_name 오름차순 정렬"""
     customers = _get_all_customers()
     keyword = keyword.strip().lower()
     if not keyword:
@@ -71,6 +71,7 @@ def search_customers(keyword: str) -> list:
                 keyword in c["manager_name"].lower() or
                 keyword in c["email"].lower()):
             result.append(c)
+    result.sort(key=lambda c: c["customer_name"].lower())
     return result
 
 
