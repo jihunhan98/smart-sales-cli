@@ -1,7 +1,7 @@
 """고객사 CRUD 서비스"""
 
 from storage import load_data, save_data
-from validators import validate_email, validate_customer_id, validate_not_empty
+from validators import validate_email, validate_customer_id, validate_not_empty, validate_grade
 
 CUSTOMERS_FILE = "customers.json"
 
@@ -22,7 +22,7 @@ def _next_customer_id(customers: list) -> str:
     return f"C{num:03d}"
 
 
-def register_customer(customer_name: str, manager_name: str, email: str) -> dict:
+def register_customer(customer_name: str, manager_name: str, email: str, grade: str = "C") -> dict:
     """고객사 등록"""
     customers = _get_all_customers()
 
@@ -32,6 +32,8 @@ def register_customer(customer_name: str, manager_name: str, email: str) -> dict
         return {"success": False, "message": "담당자명은 비울 수 없습니다."}
     if not validate_email(email):
         return {"success": False, "message": "이메일 형식이 올바르지 않습니다."}
+    if not validate_grade(grade):
+        return {"success": False, "message": "등급은 A, B, C 중 하나여야 합니다."}
 
     customer_id = _next_customer_id(customers)
     customer = {
@@ -39,6 +41,7 @@ def register_customer(customer_name: str, manager_name: str, email: str) -> dict
         "customer_name": customer_name.strip(),
         "manager_name": manager_name.strip(),
         "email": email.strip(),
+        "grade": grade.strip().upper(),
     }
     customers.append(customer)
     _save_all_customers(customers)
@@ -47,7 +50,11 @@ def register_customer(customer_name: str, manager_name: str, email: str) -> dict
 
 def list_customers() -> list:
     """고객사 목록 반환"""
-    return _get_all_customers()
+    customers = _get_all_customers()
+    for c in customers:
+        if "grade" not in c:
+            c["grade"] = "C"
+    return customers
 
 
 def get_customer(customer_id: str) -> dict:
@@ -55,6 +62,8 @@ def get_customer(customer_id: str) -> dict:
     customers = _get_all_customers()
     for c in customers:
         if c["customer_id"] == customer_id.strip():
+            if "grade" not in c:
+                c["grade"] = "C"
             return c
     return None
 
@@ -67,6 +76,8 @@ def search_customers(keyword: str) -> list:
         return []
     result = []
     for c in customers:
+        if "grade" not in c:
+            c["grade"] = "C"
         if (keyword in c["customer_name"].lower() or
                 keyword in c["manager_name"].lower() or
                 keyword in c["email"].lower()):
@@ -74,7 +85,7 @@ def search_customers(keyword: str) -> list:
     return result
 
 
-def update_customer(customer_id: str, customer_name: str, manager_name: str, email: str) -> dict:
+def update_customer(customer_id: str, customer_name: str, manager_name: str, email: str, grade: str = None) -> dict:
     """고객사 정보 수정"""
     customers = _get_all_customers()
     for c in customers:
@@ -85,9 +96,13 @@ def update_customer(customer_id: str, customer_name: str, manager_name: str, ema
                 return {"success": False, "message": "담당자명은 비울 수 없습니다."}
             if not validate_email(email):
                 return {"success": False, "message": "이메일 형식이 올바르지 않습니다."}
+            if grade is not None and not validate_grade(grade):
+                return {"success": False, "message": "등급은 A, B, C 중 하나여야 합니다."}
             c["customer_name"] = customer_name.strip()
             c["manager_name"] = manager_name.strip()
             c["email"] = email.strip()
+            if grade is not None:
+                c["grade"] = grade.strip().upper()
             _save_all_customers(customers)
             return {"success": True, "message": "고객사 정보 수정 완료", "customer": c}
     return {"success": False, "message": "존재하지 않는 고객사입니다."}

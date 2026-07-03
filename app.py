@@ -62,7 +62,10 @@ def run():
             name = input("고객사명: ").strip()
             manager = input("담당자명: ").strip()
             email = input("이메일: ").strip()
-            result = register_customer(name, manager, email)
+            grade = input("등급 (A/B/C, 기본값 C): ").strip()
+            if not grade:
+                grade = "C"
+            result = register_customer(name, manager, email, grade)
             print(result["message"])
 
         elif choice == 2:

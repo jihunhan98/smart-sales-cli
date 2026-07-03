@@ -17,3 +17,8 @@ def validate_customer_id(customer_id: str, existing_ids: list) -> bool:
 def validate_not_empty(value: str) -> bool:
     """빈 문자열 또는 공백만 있는지 검증"""
     return bool(value.strip())
+
+
+def validate_grade(grade: str) -> bool:
+    """고객사 등급 검증 (A, B, C만 허용)"""
+    return grade.strip().upper() in ("A", "B", "C")
