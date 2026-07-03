@@ -1,6 +1,7 @@
 """영업일지 CRUD 서비스"""
 
 from storage import load_data, save_data
+from validators import validate_not_empty, validate_date
 
 REPORTS_FILE = "sales_reports.json"
 VALID_STATUSES = ["DRAFT", "SUBMITTED", "APPROVED", "REJECTED"]
@@ -28,6 +29,8 @@ def register_report(customer_id: str, activity_date: str, content: str) -> dict:
 
     if not activity_date.strip():
         return {"success": False, "message": "활동 날짜는 비울 수 없습니다."}
+    if not validate_date(activity_date):
+        return {"success": False, "message": "날짜 형식이 올바르지 않습니다. (YYYY-MM-DD)"}
     if not content.strip():
         return {"success": False, "message": "내용은 비울 수 없습니다."}
 
@@ -67,6 +70,8 @@ def update_report(report_id: str, customer_id: str, activity_date: str, content:
                 return {"success": False, "message": "DRAFT 상태에서만 수정 가능합니다."}
             if not activity_date.strip():
                 return {"success": False, "message": "활동 날짜는 비울 수 없습니다."}
+            if not validate_date(activity_date):
+                return {"success": False, "message": "날짜 형식이 올바르지 않습니다. (YYYY-MM-DD)"}
             if not content.strip():
                 return {"success": False, "message": "내용은 비울 수 없습니다."}
             r["customer_id"] = customer_id.strip()
