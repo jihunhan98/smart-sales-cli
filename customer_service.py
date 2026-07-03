@@ -46,8 +46,10 @@ def register_customer(customer_name: str, manager_name: str, email: str) -> dict
 
 
 def list_customers() -> list:
-    """고객사 목록 반환"""
-    return _get_all_customers()
+    """고객사 목록 반환 (customer_name 오름차순 정렬)"""
+    customers = _get_all_customers()
+    customers.sort(key=lambda c: c["customer_name"].lower())
+    return customers
 
 
 def get_customer(customer_id: str) -> dict:

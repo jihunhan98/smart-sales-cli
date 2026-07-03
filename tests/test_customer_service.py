@@ -63,6 +63,24 @@ class TestCustomerService(unittest.TestCase):
         customers = list_customers()
         self.assertEqual(len(customers), 2)
 
+    def test_list_customers_sorted(self):
+        """고객사 목록이 customer_name 오름차순 정렬되는지 확인"""
+        register_customer("b고객사", "김철수", "b@example.com")
+        register_customer("a고객사", "이영희", "a@example.com")
+        register_customer("c고객사", "박영수", "c@example.com")
+        customers = list_customers()
+        self.assertEqual(customers[0]["customer_name"], "a고객사")
+        self.assertEqual(customers[1]["customer_name"], "b고객사")
+        self.assertEqual(customers[2]["customer_name"], "c고객사")
+
+    def test_list_customers_sorted_case_insensitive(self):
+        """대소문자 구분 없는 정렬 확인"""
+        register_customer("B고객사", "김철수", "b@example.com")
+        register_customer("a고객사", "이영희", "a@example.com")
+        customers = list_customers()
+        self.assertEqual(customers[0]["customer_name"], "a고객사")
+        self.assertEqual(customers[1]["customer_name"], "B고객사")
+
     def test_get_customer_found(self):
         """고객사 상세 조회 성공"""
         register_customer("고객사A", "김철수", "a@example.com")
